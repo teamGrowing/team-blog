@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "eslint-config-react-app": "^7.0.1",
-    "gh-pages": "^5.0.0",
+    "gh-pages": "^6.1.1",
     "prettier": "2.8.8"
   },
   "keywords": [
@@ -70,7 +70,7 @@
     "serve": "gatsby serve",
     "clean": "gatsby clean",
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1",
-    "deploy-gh": "gatsby build && gh-pages -d public",
+    "deploy": "gatsby build && gh-pages -d public",
     "deploy-gh-prefix-paths": "gatsby build --prefix-paths && gh-pages -d public",
     "check:lint": "eslint . --ext .js,.jsx",
     "fix:lint": "eslint . --fix --ext .js,.jsx",
