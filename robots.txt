@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://teamgrowing.github.io/team-blog/sitemap-index.xml
+Host: https://teamgrowing.github.io
