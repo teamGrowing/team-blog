@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { navigate } from "gatsby"
 import { useSelector } from "react-redux"
 import styled, { useTheme } from "styled-components"
 import { BiLeftArrowAlt, BiRightArrowAlt } from "react-icons/bi"
-import { Utterances } from "utterances-react-component"
-
-import { utterances } from "../../../../blog-config"
 
 import MDSpinner from "react-md-spinner"
 
@@ -151,6 +148,50 @@ const Spinner = () => {
 const Comment = () => {
   const { theme } = useSelector(state => state.theme)
   const [spinner, setSpinner] = useState(true)
+  const giscusRef = useRef(null)
+
+  useEffect(() => {
+    if (!giscusRef.current) {
+      return
+    }
+
+    const giscusContainer = giscusRef.current
+
+    const createGiscusScript = theme => {
+      const script = document.createElement("script")
+      script.src = "https://giscus.app/client.js"
+      script.async = true
+      script.defer = true
+      script.setAttribute("data-repo", "teamGrowing/team-blog")
+      script.setAttribute("data-repo-id", "R_kgDOLQP8Dg")
+      script.setAttribute("data-category", "Comments")
+      script.setAttribute("data-category-id", "DIC_kwDOLQP8Ds4CdfAy")
+      script.setAttribute("data-mapping", "title")
+      script.setAttribute("data-strict", "0")
+      script.setAttribute("data-reactions-enabled", "1")
+      script.setAttribute("data-emit-metadata", "0")
+      script.setAttribute("data-input-position", "top")
+      script.setAttribute(
+        "data-theme",
+        theme === "light" ? "light_tritanopia" : "dark_dimmed"
+      )
+      script.setAttribute("data-lang", "ko")
+      script.setAttribute("data-loading", "lazy")
+      script.setAttribute("crossOrigin", "anonymous")
+
+      return script
+    }
+
+    const script = createGiscusScript(theme)
+
+    giscusContainer.appendChild(script)
+
+    return () => {
+      if (giscusContainer.contains(script)) {
+        giscusContainer.removeChild(script)
+      }
+    }
+  }, [theme])
 
   useEffect(() => {
     setTimeout(() => {
@@ -163,20 +204,7 @@ const Comment = () => {
       {spinner && <Spinner />}
 
       <HiddenWrapper isHidden={spinner}>
-        <HiddenWrapper isHidden={theme === "light"}>
-          <Utterances
-            repo={utterances.repo}
-            theme={`github-dark`}
-            issueTerm={utterances.type}
-          />
-        </HiddenWrapper>
-        <HiddenWrapper isHidden={theme === "dark"}>
-          <Utterances
-            repo={utterances.repo}
-            theme={`github-light`}
-            issueTerm={utterances.type}
-          />
-        </HiddenWrapper>
+        <div id="comment" ref={giscusRef} />
       </HiddenWrapper>
     </>
   )

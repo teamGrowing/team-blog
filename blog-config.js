@@ -6,8 +6,4 @@ module.exports = {
   links: {
     github: "https://github.com/teamGrowing",
   },
-  utterances: {
-    repo: "teamGrowing/growing-team-blog",
-    type: "pathname",
-  },
 }
