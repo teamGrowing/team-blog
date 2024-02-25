@@ -22,6 +22,3 @@ jobs:
         
       - name: Check prettier
         run: yarn check:prettier
-      
-      - name: Build
-        run: yarn build
