@@ -455,50 +455,57 @@ import ...
 
 function MSWToolbar() {
   const queryClient = useQueryClient();
-
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
   const [items, setItems] = useState(
     Object.entries(handlerInfoManager.getHandlerInfos())
-  );
+  )
   const stagedValue = useRef<{
-    [key: string]: SetHandlerParams;
-  }>({});
+    [path: string]: {
+      [method: string]: HandlerInfo
+    }
+  }>({})
+
 
   const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
+    const { value } = e.target
     setItems(
       Object.entries(handlerInfoManager.getHandlerInfos()).filter(([path]) =>
         path.includes(value)
       )
-    );
-  };
+    )
+  }
 
   const clickApplyBtnHandler = () => {
-    Object.keys(stagedValue.current).forEach((path) => {
-      const { method, code, time } = stagedValue.current[path];
-      handlerInfoManager.setHandlerInfo({ path, method, code, time });
-    });
+    Object.keys(stagedValue.current).forEach(path => {
+      Object.keys(stagedValue.current[path]).forEach(method => {
+        const { status, delayTime } = stagedValue.current[path][method]
+        handlerInfoManager.setHandlerInfo({
+          path,
+          method,
+          code: status,
+          time: delayTime,
+        })
+      })
+    })
+    stagedValue.current = {};
     queryClient.invalidateQueries();
-    setOpen(false);
-  };
+    setOpen(false)
+  }
 
   return (
     <>
       {!open && (
         <S.ToolbarButton onClick={() => setOpen(true)}>MSW</S.ToolbarButton>
       )}
-
       {open && (
         <ToolbarBottomSheet open={open} setOpen={setOpen}>
           <S.SearchBar>
             <Icon icon="IconSearch" />
             <S.Input onChange={inputChangeHandler} />
           </S.SearchBar>
-
           {items.length === 0 && (
             <S.MessageBox>검색 결과가 없어요!</S.MessageBox>
           )}
-
           {items.length > 0 && (
             <S.ItemsContainer className="hidden-scrollbar">
               {items.flatMap(([path, methods]) =>
@@ -511,12 +518,12 @@ function MSWToolbar() {
                       delayTime={delayTime}
                       status={status}
                       onChange={(time, code) => {
-                        stagedValue.current[path] = {
-                          path,
-                          method,
-                          code,
-                          time,
-                        };
+                        stagedValue.current[path] =
+                          stagedValue.current[path] ?? {}
+                        stagedValue.current[path][method] = {
+                          status: code,
+                          delayTime: time,
+                        }
                       }}
                     />
                   )
@@ -524,7 +531,6 @@ function MSWToolbar() {
               )}
             </S.ItemsContainer>
           )}
-
           {items.length > 0 && (
             <S.ButtonArea>
               <S.Button onClick={clickApplyBtnHandler}>적용하기</S.Button>
@@ -533,7 +539,7 @@ function MSWToolbar() {
         </ToolbarBottomSheet>
       )}
     </>
-  );
+  )
 }
 
 export default MSWToolbar;
